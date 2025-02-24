@@ -1,3 +1,5 @@
 nltk
 keras
+pandas
+tensorflow[and-cuda]
 python-dotenv
