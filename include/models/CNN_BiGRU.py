@@ -17,6 +17,7 @@ CNN_BiGRU.add(layers.Dropout(0.2))
 # BiGRU
 CNN_BiGRU.add(layers.Bidirectional(layers.GRU(3)))
 
+# Fully Connected Layer
 CNN_BiGRU.add(layers.Dense(25))
 CNN_BiGRU.add(layers.Dropout(0.5))
 CNN_BiGRU.add(layers.Dense(25))
