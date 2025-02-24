@@ -1,5 +1,6 @@
 nltk
 keras
 pandas
-tensorflow[and-cuda]
+scikit-learn
 python-dotenv
+tensorflow[and-cuda]
