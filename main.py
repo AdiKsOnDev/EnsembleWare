@@ -11,6 +11,7 @@ if len(sys.argv) == 1:
     print("Please choose which experiment to run, options:")
     print("\tcnnbigru-functions")
     print("\tcnnbigru-dlls")
+    print("\tcnnbigru-sections")
 
     exit()
 

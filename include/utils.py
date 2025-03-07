@@ -27,23 +27,8 @@ def preprocess_for_CNN_BiGRU(df, tokenizer, feature):
     """
     df_dlls = df[[feature, "Label"]].copy()
     df_dlls = df_dlls[df_dlls[feature].notna()]
-    api_calls = df_dlls[feature]
 
-    w2v_model = Word2Vec(sentences=api_calls, vector_size=100,
-                         window=5, min_count=1, workers=4)
     tokenizer.fit_on_texts(df_dlls[feature])
-    word_index = tokenizer.word_index
-    embedding_dim = 100
-
-    # +1 to account for padding symbol
-    embedding_matrix = np.zeros((len(word_index) + 1, embedding_dim))
-
-    for word, i in word_index.items():
-        if word in w2v_model.wv:
-            embedding_matrix[i] = w2v_model.wv[word]
-        else:
-            # Random for unknown words
-            embedding_matrix[i] = np.random.uniform(-0.01, 0.01, embedding_dim)
 
     sequences = tokenizer.texts_to_sequences(df_dlls[feature])
     max_length = max(len(seq) for seq in sequences)
