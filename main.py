@@ -4,8 +4,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from tensorflow.keras.preprocessing.text import Tokenizer
 
-from include.models.CNN_BiGRU import compile
-from include.utils import preprocess_for_CNN_BiGRU, run_CNN_BiGRU
+from include.utils import run_CNN_BiGRU
 
 if len(sys.argv) == 1:
     print("Please choose which experiment to run, options:")

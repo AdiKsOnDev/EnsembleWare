@@ -8,6 +8,8 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
+from include.models.CNN_BiGRU import compile_model
+
 def tokenize(string):
     return NLTKWordTokenizer.tokenize(string)
 
@@ -52,7 +54,7 @@ def run_CNN_BiGRU(df, tokenizer, feature='Sections', model_path="./models"):
     )
 
     if not os.path.exists(f'{model_path}/CNN_BiGRU_{feature}.h5'):
-        CNN_BiGRU = compile()
+        CNN_BiGRU = compile_model()
         X, y = preprocess_for_CNN_BiGRU(train_api, tokenizer, feature)
 
         CNN_BiGRU.fit(x=X, y=y, batch_size=32, epochs=16, verbose=2)
