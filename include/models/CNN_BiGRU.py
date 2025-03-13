@@ -7,7 +7,7 @@ load_dotenv()
 VOCABULARY_SIZE = int(os.getenv("DLL_VOCABULARY_SIZE"))
 
 
-def compile():
+def compile_model():
     CNN_BiGRU = models.Sequential()
 
     CNN_BiGRU.add(layers.Embedding(VOCABULARY_SIZE, 10))
@@ -25,7 +25,7 @@ def compile():
     CNN_BiGRU.add(layers.Dropout(0.5))
     CNN_BiGRU.add(layers.Dense(25))
     CNN_BiGRU.add(layers.Dropout(0.5))
-    CNN_BiGRU.add(layers.Dense(2, activation='sigmoid'))
+    CNN_BiGRU.add(layers.Dense(1, activation='sigmoid'))
 
     CNN_BiGRU.compile(loss=losses.BinaryCrossentropy(), optimizer='adam')
 

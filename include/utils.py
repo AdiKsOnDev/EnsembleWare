@@ -37,8 +37,7 @@ def preprocess_for_CNN_BiGRU(df, tokenizer, feature):
     labels = df_dlls['Label'].astype('category').cat.codes
 
     X = pad_sequences(sequences, maxlen=max_length, padding='post')
-    y = tf.keras.utils.to_categorical(
-        labels, num_classes=len(df_dlls['Label'].unique()))
+    y = labels 
 
     return X, y
 
@@ -66,11 +65,12 @@ def run_CNN_BiGRU(df, tokenizer, feature='Sections', model_path="./models"):
 
     y_hat = CNN_BiGRU.predict(X)
     y_hat = (y_hat > 0.5).astype(int)  # Classify the raw probabilities
+    print(y)
 
     accuracy = accuracy_score(y_hat, y)
-    precision = precision_score(y_hat, y, average="weighted")
-    recall = recall_score(y_hat, y, average="weighted")
-    f1 = f1_score(y_hat, y, average="weighted")
+    precision = precision_score(y_hat, y)
+    recall = recall_score(y_hat, y)
+    f1 = f1_score(y_hat, y)
 
     metrics = {
         "accuracy": accuracy,
