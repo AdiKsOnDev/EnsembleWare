@@ -1,10 +1,32 @@
 import os
 import sys
+import logging
 import pandas as pd
 from dotenv import load_dotenv
 from tensorflow.keras.preprocessing.text import Tokenizer
 
 from include.utils import run_CNN_BiGRU
+
+LOG_LEVEL = logging.DEBUG
+
+main_logger = logging.getLogger('main')
+include_logger = logging.getLogger('include')
+models_logger = logging.getLogger('models')
+
+logging.basicConfig(
+    level=logging.WARNING,
+    format="| %(name)s | [%(levelname)s] | %(filename)s:%(lineno)d | %(message)s |"
+)
+
+main_logger.setLevel(
+    LOG_LEVEL
+)
+include_logger.setLevel(
+    LOG_LEVEL
+)
+models_logger.setLevel(
+    LOG_LEVEL
+)
 
 if len(sys.argv) == 1:
     print("Please choose which experiment to run, options:")
