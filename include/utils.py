@@ -15,7 +15,7 @@ from include.models.CNN_BiGRU import compile_model
 def tokenize(string):
     return NLTKWordTokenizer.tokenize(string)
 
-def preprocess_for_CNN_BiGRU(df, tokenizer, feature):
+def preprocess_textual(df, tokenizer, feature):
     """
     Preprocesses and divides the dataframe,
     returning X, y for the given feature
@@ -60,7 +60,7 @@ def run_CNN_BiGRU(df, tokenizer, feature='Sections', model_path="./models"):
     )
 
     if not os.path.exists(f'{model_path}/CNN_BiGRU_{feature}.h5'):
-        X, y, vocabulary_size = preprocess_for_CNN_BiGRU(train_api, tokenizer, feature)
+        X, y, vocabulary_size = preprocess_textual(train_api, tokenizer, feature)
         CNN_BiGRU = compile_model(vocabulary_size)
 
         CNN_BiGRU.fit(x=X, y=y, batch_size=32, epochs=16, verbose=2)
@@ -68,7 +68,7 @@ def run_CNN_BiGRU(df, tokenizer, feature='Sections', model_path="./models"):
     else:
         CNN_BiGRU = load_model(f'{model_path}/CNN_BiGRU_{feature}.h5')
 
-    X, y, _ = preprocess_for_CNN_BiGRU(test_api, tokenizer, feature)
+    X, y, _ = preprocess_textual(test_api, tokenizer, feature)
 
     y_hat = CNN_BiGRU.predict(X)
     y_hat = (y_hat > 0.5).astype(int)  # Classify the raw probabilities
