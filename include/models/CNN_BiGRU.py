@@ -32,6 +32,6 @@ def compile_model(VOCABULARY_SIZE):
     logger.debug('Fully connected and output layers added')
 
     CNN_BiGRU.compile(loss=losses.BinaryCrossentropy(), optimizer='adam')
-    logger.debug('Model compiled, returning')
+    logger.info('Model compiled, returning')
 
     return CNN_BiGRU
