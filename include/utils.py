@@ -65,7 +65,6 @@ def run_CNN_BiGRU(df, tokenizer, feature='Sections', model_path="./models"):
 
     y_hat = CNN_BiGRU.predict(X)
     y_hat = (y_hat > 0.5).astype(int)  # Classify the raw probabilities
-    print(y)
 
     accuracy = accuracy_score(y_hat, y)
     precision = precision_score(y_hat, y)
