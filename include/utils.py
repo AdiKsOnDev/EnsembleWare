@@ -1,7 +1,5 @@
 import os
-import numpy as np
-import tensorflow as tf
-from gensim.models import Word2Vec
+import logging
 from keras.models import load_model
 from nltk.tokenize import NLTKWordTokenizer
 from sklearn.model_selection import train_test_split
@@ -11,6 +9,8 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn.feature_extraction.text import CountVectorizer
 
 from include.models.CNN_BiGRU import compile_model
+
+logger = logging.getLogger('include')
 
 def tokenize(string):
     return NLTKWordTokenizer.tokenize(string)
@@ -32,16 +32,20 @@ def preprocess_textual(df, tokenizer, feature):
     df_dlls = df[[feature, "Label"]].copy()
     df_dlls = df_dlls[df_dlls[feature].notna()]
 
+    logger.debug('Getting the vocabulary size')
     vectorizer = CountVectorizer()
     vectorizer.fit_transform(df_dlls[feature])
     vocabulary = vectorizer.get_feature_names_out()
     vocabulary_size = len(vocabulary)
+    logger.debug(f'Got vocabulary size of {vocabulary_size}')
 
     tokenizer.fit_on_texts(df_dlls[feature])
+    logger.debug('Tokenized the texts')
 
     sequences = tokenizer.texts_to_sequences(df_dlls[feature])
     max_length = max(len(seq) for seq in sequences)
     labels = df_dlls['Label'].astype('category').cat.codes
+    logging.debug('Converted tokens to sequences and encoded the labels')
 
     X = pad_sequences(sequences, maxlen=max_length, padding='post')
     y = labels 
@@ -58,15 +62,19 @@ def run_CNN_BiGRU(df, tokenizer, feature='Sections', model_path="./models"):
         random_state=42,
         stratify=df_api['Label']
     )
+    logger.debug(f'Train set size is {len(train_api)}, while Test set size is {len(test_api)}')
 
     if not os.path.exists(f'{model_path}/CNN_BiGRU_{feature}.h5'):
+        logger.warning(f'Model wasn\'t found in {model_path}/CNN_BiGRU_{feature}.h5, starting model compilation')
         X, y, vocabulary_size = preprocess_textual(train_api, tokenizer, feature)
         CNN_BiGRU = compile_model(vocabulary_size)
 
         CNN_BiGRU.fit(x=X, y=y, batch_size=32, epochs=16, verbose=2)
         CNN_BiGRU.save(f'{model_path}/CNN_BiGRU_{feature}.h5')
+        logger.info(f'Model saved in {model_path}/CNN_BiGRU_{feature}.h5')
     else:
         CNN_BiGRU = load_model(f'{model_path}/CNN_BiGRU_{feature}.h5')
+        logger.warning(f'Model loaded from {model_path}/CNN_BiGRU_{feature}.h5')
 
     X, y, _ = preprocess_textual(test_api, tokenizer, feature)
 
