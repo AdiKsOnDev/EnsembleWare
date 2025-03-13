@@ -1,13 +1,10 @@
-import os
 from dotenv import load_dotenv
 from keras import layers, models, losses
 
 load_dotenv()
 
-VOCABULARY_SIZE = int(os.getenv("DLL_VOCABULARY_SIZE"))
 
-
-def compile_model():
+def compile_model(VOCABULARY_SIZE):
     CNN_BiGRU = models.Sequential()
 
     CNN_BiGRU.add(layers.Embedding(VOCABULARY_SIZE, 10))

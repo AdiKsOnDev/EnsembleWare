@@ -8,6 +8,8 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
+from sklearn.feature_extraction.text import CountVectorizer
+
 from include.models.CNN_BiGRU import compile_model
 
 def tokenize(string):
@@ -30,6 +32,11 @@ def preprocess_for_CNN_BiGRU(df, tokenizer, feature):
     df_dlls = df[[feature, "Label"]].copy()
     df_dlls = df_dlls[df_dlls[feature].notna()]
 
+    vectorizer = CountVectorizer()
+    vectorizer.fit_transform(df_dlls[feature])
+    vocabulary = vectorizer.get_feature_names_out()
+    vocabulary_size = len(vocabulary)
+
     tokenizer.fit_on_texts(df_dlls[feature])
 
     sequences = tokenizer.texts_to_sequences(df_dlls[feature])
@@ -39,7 +46,7 @@ def preprocess_for_CNN_BiGRU(df, tokenizer, feature):
     X = pad_sequences(sequences, maxlen=max_length, padding='post')
     y = labels 
 
-    return X, y
+    return X, y, vocabulary_size
 
 def run_CNN_BiGRU(df, tokenizer, feature='Sections', model_path="./models"):
     df_api = df[[feature, 'Label']].copy()
@@ -53,15 +60,15 @@ def run_CNN_BiGRU(df, tokenizer, feature='Sections', model_path="./models"):
     )
 
     if not os.path.exists(f'{model_path}/CNN_BiGRU_{feature}.h5'):
-        CNN_BiGRU = compile_model()
-        X, y = preprocess_for_CNN_BiGRU(train_api, tokenizer, feature)
+        X, y, vocabulary_size = preprocess_for_CNN_BiGRU(train_api, tokenizer, feature)
+        CNN_BiGRU = compile_model(vocabulary_size)
 
         CNN_BiGRU.fit(x=X, y=y, batch_size=32, epochs=16, verbose=2)
-        CNN_BiGRU.save(f'{model_path}/CNN_BiGRU_Sections.h5')
+        CNN_BiGRU.save(f'{model_path}/CNN_BiGRU_{feature}.h5')
     else:
-        CNN_BiGRU = load_model(f'{model_path}/CNN_BiGRU_Sections.h5')
+        CNN_BiGRU = load_model(f'{model_path}/CNN_BiGRU_{feature}.h5')
 
-    X, y = preprocess_for_CNN_BiGRU(test_api, tokenizer, feature)
+    X, y, _ = preprocess_for_CNN_BiGRU(test_api, tokenizer, feature)
 
     y_hat = CNN_BiGRU.predict(X)
     y_hat = (y_hat > 0.5).astype(int)  # Classify the raw probabilities
