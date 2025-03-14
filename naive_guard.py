@@ -3,8 +3,9 @@ import re
 import logging
 import pandas as pd
 from dotenv import load_dotenv
-from sklearn.naive_bayes import ComplementNB, MultinomialNB, GaussianNB, BernoulliNB
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import ComplementNB, MultinomialNB, GaussianNB, BernoulliNB
 
 from include.utils import setup_loggers
 from include.models.pipelines import train_model, evaluate_model
@@ -47,7 +48,7 @@ for column in X.columns:
 print(X.head())
 
 train_X, test_X, train_y, test_y = train_test_split(X, y, test_size=0.25, stratify=y)
-for model in (GaussianNB(), MultinomialNB(), BernoulliNB(), ComplementNB()):
+for model in (GaussianNB(), MultinomialNB(), BernoulliNB(), ComplementNB(), RandomForestClassifier()):
     model.fit(train_X, train_y)
 
     evaluate_model(test_X, test_y, model)
