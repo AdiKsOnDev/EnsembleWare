@@ -6,6 +6,7 @@ from sklearn.pipeline import Pipeline
 from nltk.tokenize import NLTKWordTokenizer
 from sklearn.base import BaseEstimator, TransformerMixin
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 from sklearn.feature_extraction.text import CountVectorizer
 
@@ -53,6 +54,34 @@ def preprocess_textual(df, tokenizer, feature):
 
     return X, y, vocabulary_size
 
+
+def evaluate_predictions(y_hat: list[int], y: list[int]):
+    """
+    Calculates and prints out the accuracy, precision, recall, f1_score
+
+    Args:
+        y_hat (list[int]): Predictions of the model
+        y (list[int]): Actual labels from the dataset
+
+    Returns:
+        dict: Dictionary with metrics
+    """
+    accuracy = accuracy_score(y_hat, y)
+    precision = precision_score(y_hat, y)
+    recall = recall_score(y_hat, y)
+    f1 = f1_score(y_hat, y)
+
+    metrics = {
+        "accuracy": accuracy,
+        "precision": precision,
+        "recall": recall,
+        "f1_score": f1,
+    }
+
+    for metric, value in metrics.items():
+        print(f"{metric}: {value:.5f}")
+
+    return metrics
 
 
 class TextNormalizer(BaseEstimator, TransformerMixin):
