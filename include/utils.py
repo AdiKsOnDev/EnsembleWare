@@ -83,6 +83,25 @@ def evaluate_predictions(y_hat: list[int], y: list[int]):
 
     return metrics
 
+def setup_loggers(log_level):
+    main_logger = logging.getLogger('main')
+    include_logger = logging.getLogger('include')
+    models_logger = logging.getLogger('models')
+
+    logging.basicConfig(
+        level=logging.WARNING,
+        format="| %(name)s | [%(levelname)s] | %(filename)s:%(lineno)d | %(message)s |"
+    )
+
+    main_logger.setLevel(
+        log_level
+    )
+    include_logger.setLevel(
+        log_level
+    )
+    models_logger.setLevel(
+        log_level
+    )
 
 class TextNormalizer(BaseEstimator, TransformerMixin):
     def __init__(self, language='english'):
@@ -116,7 +135,6 @@ class TextNormalizer(BaseEstimator, TransformerMixin):
         Returns:
         (string): Returns the concatenated text without the stopwords
         """
-        logger.debug("remove_stopwords called")
         words = text.split()
         filtered_words = [word for word in words if word not in self.stop_words]
 
@@ -132,7 +150,6 @@ class TextNormalizer(BaseEstimator, TransformerMixin):
         Returns:
         (string): Returns the concatenated text without the prefixes and suffixes
         """
-        logger.debug("stem_text called")
         words = text.split()
         stemmed_words = [self.stemmer.stem(word) for word in words]
 
@@ -147,7 +164,6 @@ class TextNormalizer(BaseEstimator, TransformerMixin):
         Returns:
         (string): Returns the preprocessed text after case normalization, stopword removal, and stemming.
         """
-        logger.debug("preprocess_text called")
         text = self._case_normalization(text)
         text = self._remove_stopwords(text)
         text = self._stem_text(text)
