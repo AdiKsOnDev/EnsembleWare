@@ -122,7 +122,7 @@ class TextNormalizer(BaseEstimator, TransformerMixin):
         Returns:
         (string): Returns the original string in lowercase
         """
-        return text.lower()
+        return str(text).lower()
 
 
     def _remove_stopwords(self, text):
