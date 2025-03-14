@@ -4,9 +4,8 @@ from dotenv import load_dotenv
 from keras.models import load_model
 from keras import layers, models, losses
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-from include.utils import preprocess_textual
+from include.utils import evaluate_predictions, preprocess_textual
 
 load_dotenv()
 logger = logging.getLogger('models')
@@ -82,17 +81,4 @@ def run_CNN_BiGRU(df, tokenizer, feature='Sections', model_path="./models"):
     y_hat = CNN_BiGRU.predict(X)
     y_hat = (y_hat > 0.5).astype(int)  # Classify the raw probabilities
 
-    accuracy = accuracy_score(y_hat, y)
-    precision = precision_score(y_hat, y)
-    recall = recall_score(y_hat, y)
-    f1 = f1_score(y_hat, y)
-
-    metrics = {
-        "accuracy": accuracy,
-        "precision": precision,
-        "recall": recall,
-        "f1_score": f1,
-    }
-
-    for metric, value in metrics.items():
-        print(f"{metric}: {value:.5f}")
+    evaluate_predictions(y_hat, y)
