@@ -1,5 +1,10 @@
+import nltk
 import logging
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from sklearn.pipeline import Pipeline
 from nltk.tokenize import NLTKWordTokenizer
+from sklearn.base import BaseEstimator, TransformerMixin
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 from sklearn.feature_extraction.text import CountVectorizer
@@ -47,3 +52,94 @@ def preprocess_textual(df, tokenizer, feature):
     y = labels 
 
     return X, y, vocabulary_size
+
+
+
+class TextNormalizer(BaseEstimator, TransformerMixin):
+    def __init__(self, language='english'):
+        nltk.download('stopwords')
+        nltk.download('punkt_tab')
+
+        self.language = language
+        self.stop_words = set(stopwords.words(language))
+        self.stemmer = PorterStemmer()
+
+
+    def _case_normalization(self, text):
+        """
+        A method to change the parameter into a lowercase string.
+        Args:
+        text (string): Every word in a sentence
+
+        Returns:
+        (string): Returns the original string in lowercase
+        """
+        logger.debug("case_normalization called")
+        return text.lower()
+
+
+    def _remove_stopwords(self, text):
+        """
+        A method to remove the words from the text that are in the stopwords list.
+        Args:
+        text (string): Every word in a sentence
+
+        Returns:
+        (string): Returns the concatenated text without the stopwords
+        """
+        logger.debug("remove_stopwords called")
+        words = text.split()
+        filtered_words = [word for word in words if word not in self.stop_words]
+
+        return ' '.join(filtered_words)
+
+
+    def _stem_text(self, text):
+        """
+        A method to remove the prefixes and suffixes from the words(stemming).
+        Args:
+        text (string): Every word in a sentence
+
+        Returns:
+        (string): Returns the concatenated text without the prefixes and suffixes
+        """
+        logger.debug("stem_text called")
+        words = text.split()
+        stemmed_words = [self.stemmer.stem(word) for word in words]
+
+        return ' '.join(stemmed_words)
+
+
+    def _preprocess_text(self, text):
+        """
+        A method to use the above techniques in order to preprocess the parameter
+        text (string): Every word in a sentence
+
+        Returns:
+        (string): Returns the preprocessed text after case normalization, stopword removal, and stemming.
+        """
+        logger.debug("preprocess_text called")
+        text = self._case_normalization(text)
+        text = self._remove_stopwords(text)
+        text = self._stem_text(text)
+
+        return text
+
+
+    def fit(self, X, y=None):
+        return self
+
+
+    def transform(self, X):
+        logger.debug(f"Type of the first document: {type(X[0])}")
+        for doc in X:
+            yield self._preprocess_text(doc)
+
+def create_pipeline(classifier, vectorizer):
+    steps = [
+        ('normalizer', TextNormalizer()),
+        ('vectorizer', vectorizer),
+        ('classifier', classifier)
+    ]
+
+    return Pipeline(steps)
