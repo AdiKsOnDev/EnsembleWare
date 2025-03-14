@@ -1,7 +1,10 @@
 nltk
+tqdm
 keras
 pandas
 gensim
+pytorch
+transformers
 scikit-learn
 python-dotenv
 tensorflow[and-cuda]
