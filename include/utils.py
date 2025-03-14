@@ -160,7 +160,6 @@ class TextNormalizer(BaseEstimator, TransformerMixin):
 
 
     def transform(self, X):
-        logger.debug(f"Type of the first document: {type(X[0])}")
         for doc in X:
             yield self._preprocess_text(doc)
 
@@ -170,5 +169,6 @@ def create_pipeline(classifier, vectorizer):
         ('vectorizer', vectorizer),
         ('classifier', classifier)
     ]
+    logger.debug(f'Making a pipeline with the {type(vectorizer).__name__} and {type(classifier).__name__}')
 
     return Pipeline(steps)
