@@ -3,7 +3,7 @@ import re
 import logging
 import pandas as pd
 from dotenv import load_dotenv
-from sklearn.naive_bayes import CategoricalNB, ComplementNB, MultinomialNB, GaussianNB, BernoulliNB
+from sklearn.naive_bayes import ComplementNB, MultinomialNB, GaussianNB, BernoulliNB
 from sklearn.model_selection import train_test_split
 
 from include.utils import setup_loggers
