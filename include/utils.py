@@ -122,7 +122,6 @@ class TextNormalizer(BaseEstimator, TransformerMixin):
         Returns:
         (string): Returns the original string in lowercase
         """
-        logger.debug("case_normalization called")
         return text.lower()
 
 
