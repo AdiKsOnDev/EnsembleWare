@@ -67,6 +67,7 @@ def run_CNN_BiGRU(df, tokenizer, feature='Sections', model_path="./models"):
     if not os.path.exists(f'{model_path}/CNN_BiGRU_{feature}.h5'):
         logger.warning(f'Model wasn\'t found in {model_path}/CNN_BiGRU_{feature}.h5, starting model compilation')
         X, y, vocabulary_size = preprocess_textual(train_api, tokenizer, feature)
+        vocabulary_size += 100
         CNN_BiGRU = compile_model(vocabulary_size)
 
         CNN_BiGRU.fit(x=X, y=y, batch_size=32, epochs=16, verbose=2)
