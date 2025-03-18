@@ -10,9 +10,10 @@ from sklearn.naive_bayes import ComplementNB, MultinomialNB, GaussianNB, Bernoul
 from include.utils import setup_loggers
 from include.pipelines import train_model, evaluate_model
 
-LOG_LEVEL = logging.WARNING
+LOG_LEVEL = logging.INFO
 load_dotenv()
 setup_loggers(LOG_LEVEL)
+logger = logging.getLogger('main')
 
 DATASET_PATH = os.getenv('DATASET_PATH')
 RESULTS_PATH = os.getenv('RESULTS_PATH')
@@ -24,6 +25,7 @@ df = pd.read_csv(DATASET_PATH)
 Textual Features
 """
 for feature in ('Sections', 'DLLs', 'Functions'):
+    logger.info(f"Training MultinomialNB using {feature}")
     df_api = df[[feature, 'Label']].copy()
     df_api = df_api[df_api[feature].notna()]
     X = df_api[feature]
