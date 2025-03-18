@@ -1,4 +1,4 @@
-from include.models.basemodel import BaseModel
+from include.models.transformers.basemodel import BaseModel
 
 
 class RoformerModel(BaseModel):

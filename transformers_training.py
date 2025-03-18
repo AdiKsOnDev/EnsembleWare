@@ -8,8 +8,8 @@ from tqdm import tqdm
 from include.Dataset import Dataset
 from include.trainer import fine_tune
 from include.utils import setup_loggers
-from include.model.transformers.bert import BERTModel
-from include.model.transformers.roformer import RoformerModel
+from include.models.transformers.bert import BERTModel
+from include.models.transformers.roformer import RoformerModel
 
 df = pd.read_csv('./data/PE_Dataset_Labeled.csv')
 
