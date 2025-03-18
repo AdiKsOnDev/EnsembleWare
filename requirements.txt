@@ -3,7 +3,7 @@ tqdm
 keras
 pandas
 gensim
-pytorch
+torch
 transformers
 scikit-learn
 python-dotenv
