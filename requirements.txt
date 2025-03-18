@@ -1,9 +1,10 @@
 nltk
 tqdm
 keras
+torch
 pandas
 gensim
-torch
+rjieba
 tf-keras
 transformers
 scikit-learn
