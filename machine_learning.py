@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import ComplementNB, MultinomialNB, GaussianNB, BernoulliNB
 
 from include.utils import setup_loggers
-from include.models.pipelines import train_model, evaluate_model
+from include.pipelines import train_model, evaluate_model
 
 LOG_LEVEL = logging.WARNING
 load_dotenv()
