@@ -12,6 +12,7 @@ from include.models.transformers.bert import BERTModel
 from include.models.transformers.roformer import RoformerModel
 
 df = pd.read_csv('./data/PE_Dataset_Labeled.csv')
+label_encoder = LabelEncoder()
 
 setup_loggers(log_level=logging.DEBUG)
 main_logger = logging.getLogger('main')
@@ -32,7 +33,7 @@ for feature in features:
         df["Label"] = label_encoder.fit_transform(df["Label"])
 
         texts = df[feature].tolist()
-        labels = df["label"].tolist()
+        labels = df["Label"].tolist()
 
         train_X, test_X, train_y, test_y = train_test_split(
             texts, labels, test_size=0.25, random_state=42, stratify=labels
