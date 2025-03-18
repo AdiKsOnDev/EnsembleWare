@@ -4,6 +4,7 @@ keras
 pandas
 gensim
 torch
+tf-keras
 transformers
 scikit-learn
 python-dotenv
