@@ -6,6 +6,7 @@ pandas
 gensim
 rjieba
 tf-keras
+accelerate
 transformers
 scikit-learn
 python-dotenv
