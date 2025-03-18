@@ -45,8 +45,6 @@ for column in X.columns:
     X[column].fillna(0, inplace=True)
     X[column] = X[column].apply(lambda x: float(re.sub("[^0-9]", "", str(x))))
 
-print(X.head())
-
 train_X, test_X, train_y, test_y = train_test_split(X, y, test_size=0.25, stratify=y)
 for model in (GaussianNB(), MultinomialNB(), BernoulliNB(), ComplementNB(), RandomForestClassifier()):
     model.fit(train_X, train_y)
