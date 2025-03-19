@@ -5,7 +5,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from tensorflow.keras.preprocessing.text import Tokenizer
 
-from include.utils import setup_loggers()
+from include.utils import setup_loggers
 from include.models.CNN_BiGRU import run_CNN_BiGRU
 
 LOG_LEVEL = logging.DEBUG

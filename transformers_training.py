@@ -32,8 +32,13 @@ for feature in features:
 
         df["Label"] = label_encoder.fit_transform(df["Label"])
 
-        texts = df[feature].tolist()
-        labels = df["Label"].tolist()
+        main_logger.debug(f"DataFrame size before filtering is {len(df)}")
+        df_filtered = df[[feature, 'Label']].copy()
+        df_filtered = df_filtered[df_filtered[feature].notna()]
+        main_logger.debug(f"DataFrame size after filtering is {len(df_filtered)}")
+
+        texts = df_filtered[feature].tolist()
+        labels = df_filtered["Label"].tolist()
 
         train_X, test_X, train_y, test_y = train_test_split(
             texts, labels, test_size=0.25, random_state=42, stratify=labels
@@ -47,4 +52,4 @@ for feature in features:
         test_dataset = Dataset(test_X, test_y)
 
         main_logger.debug(f"About to start fine-tuning {model.model_name}")
-        fine_tune(model, train_dataset, test_dataset)
+        fine_tune(model, train_dataset, test_dataset, results_dir=f"./results/transformers/{feature}/")
