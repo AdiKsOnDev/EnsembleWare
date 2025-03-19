@@ -1,3 +1,5 @@
+nvidia-cudnn-cu11==8.6.0.163 
+
 nltk
 tqdm
 keras
@@ -10,4 +12,4 @@ accelerate
 transformers
 scikit-learn
 python-dotenv
-tensorflow[and-cuda]
+tensorflow==2.17.*
