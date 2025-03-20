@@ -3,6 +3,7 @@ import logging
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from tqdm import tqdm
 
 from include.Dataset import Dataset
@@ -10,6 +11,7 @@ from include.trainer import fine_tune
 from include.utils import setup_loggers
 from include.models.transformers.bert import BERTModel
 from include.models.transformers.roformer import RoformerModel
+from include.models.transformers.modernbert import ModernBERT
 
 df = pd.read_csv('./data/PE_Dataset_Labeled.csv')
 label_encoder = LabelEncoder()
@@ -18,6 +20,8 @@ setup_loggers(log_level=logging.DEBUG)
 main_logger = logging.getLogger('main')
 
 models = [
+        # ModernBERT(model_name="answerdotai/ModernBERT-base",
+        #                num_labels=2, max_length=1024),
         RoformerModel(model_name="junnyu/roformer_chinese_base", 
                       num_labels=2),
         BERTModel(model_name="bert-base-uncased", 
@@ -27,9 +31,9 @@ features = ["DLLs", "Functions", "Sections"]
 
 main_logger.info("Starting the cycle without preprocessing")
 for feature in features:
-    for model in models:
-        main_logger.debug(f"Started the pipeline for {model.model_name} using {feature} Names")
+    validation_X, validation_y = [], []
 
+    for model in models:
         df["Label"] = label_encoder.fit_transform(df["Label"])
 
         main_logger.debug(f"DataFrame size before filtering is {len(df)}")
@@ -43,6 +47,12 @@ for feature in features:
         train_X, test_X, train_y, test_y = train_test_split(
             texts, labels, test_size=0.25, random_state=42, stratify=labels
         )
+        train_X, validation_X, train_y, validation_y = train_test_split(
+            texts, labels, test_size=0.25, random_state=42, stratify=labels
+        )
+
+
+        main_logger.debug(f"Started the pipeline for {model.model_name} using {feature} Names")
 
         main_logger.info(f"Tokenizing for {model.model_name}")
 
@@ -53,3 +63,23 @@ for feature in features:
 
         main_logger.debug(f"About to start fine-tuning {model.model_name}")
         fine_tune(model, train_dataset, test_dataset, results_dir=f"./results/transformers/{feature}/")
+
+    print(f"Results for Models trained with {feature}:")
+    for model in models:
+        predictions = model.predict(validation_X)
+
+        accuracy = accuracy_score(validation_y, predictions)
+        precision = precision_score(validation_y, predictions)
+        recall = recall_score(validation_y, predictions)
+        f1= f1_score(validation_y, predictions)
+
+        metrics = {
+            "Accuracy": accuracy,
+            "Precision": precision,
+            "Recall": recall,
+            "Macro F1_Score": f1,
+        }
+
+        print(f"\tResults for {model.model_name}")
+        for metric, value in metrics.items():
+            print(f"\t\t{metric}: {value:.4f}")
