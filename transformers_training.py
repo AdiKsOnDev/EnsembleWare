@@ -20,14 +20,15 @@ setup_loggers(log_level=logging.DEBUG)
 main_logger = logging.getLogger('main')
 
 models = [
-        # ModernBERT(model_name="answerdotai/ModernBERT-base",
-        #                num_labels=2, max_length=1024),
+        ModernBERT(model_name="answerdotai/ModernBERT-base",
+                       num_labels=2, max_length=1024),
         RoformerModel(model_name="junnyu/roformer_chinese_base", 
                       num_labels=2),
         BERTModel(model_name="bert-base-uncased", 
                   num_labels=2)
     ]
 features = ["DLLs", "Functions", "Sections"]
+directory = './results/transformers'
 
 main_logger.info("Starting the cycle without preprocessing")
 for feature in features:
@@ -52,20 +53,30 @@ for feature in features:
         )
 
 
-        main_logger.debug(f"Started the pipeline for {model.model_name} using {feature} Names")
+        # main_logger.debug(f"Started the pipeline for {model.model_name} using {feature} Names")
+        #
+        # main_logger.info(f"Tokenizing for {model.model_name}")
+        #
+        # train_X = model.tokenize(train_X)
+        # test_X = model.tokenize(test_X)
+        # train_dataset = Dataset(train_X, train_y)
+        # test_dataset = Dataset(test_X, test_y)
+        #
+        # main_logger.debug(f"About to start fine-tuning {model.model_name}")
+        # fine_tune(model, train_dataset, test_dataset, results_dir=f"./results/transformers/{feature}/")
 
-        main_logger.info(f"Tokenizing for {model.model_name}")
-
-        train_X = model.tokenize(train_X)
-        test_X = model.tokenize(test_X)
-        train_dataset = Dataset(train_X, train_y)
-        test_dataset = Dataset(test_X, test_y)
-
-        main_logger.debug(f"About to start fine-tuning {model.model_name}")
-        fine_tune(model, train_dataset, test_dataset, results_dir=f"./results/transformers/{feature}/")
+    models_validation = [
+            ModernBERT(model_name=f"{directory}/{feature}/answerdotai/ModernBERT-base/fine_tuned_answerdotai/ModernBERT-base", 
+                       num_labels=2, 
+                       max_length=1024),
+            RoformerModel(model_name=f"{directory}/{feature}/junnyu/roformer_chinese_base/fine_tuned_junnyu/roformer_chinese_base/",
+                       num_labels=2),
+            BERTModel(model_name=f"{directory}/{feature}/bert-base-uncased/fine_tuned_bert-base-uncased/",
+                       num_labels=2)
+        ]
 
     print(f"Results for Models trained with {feature}:")
-    for model in models:
+    for model in models_validation:
         predictions = model.predict(validation_X)
 
         accuracy = accuracy_score(validation_y, predictions)
@@ -77,7 +88,7 @@ for feature in features:
             "Accuracy": accuracy,
             "Precision": precision,
             "Recall": recall,
-            "Macro F1_Score": f1,
+            "F1_Score": f1,
         }
 
         print(f"\tResults for {model.model_name}")
