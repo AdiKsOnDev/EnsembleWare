@@ -53,17 +53,17 @@ for feature in features:
         )
 
 
-        # main_logger.debug(f"Started the pipeline for {model.model_name} using {feature} Names")
-        #
-        # main_logger.info(f"Tokenizing for {model.model_name}")
-        #
-        # train_X = model.tokenize(train_X)
-        # test_X = model.tokenize(test_X)
-        # train_dataset = Dataset(train_X, train_y)
-        # test_dataset = Dataset(test_X, test_y)
-        #
-        # main_logger.debug(f"About to start fine-tuning {model.model_name}")
-        # fine_tune(model, train_dataset, test_dataset, results_dir=f"./results/transformers/{feature}/")
+        main_logger.debug(f"Started the pipeline for {model.model_name} using {feature} Names")
+
+        main_logger.info(f"Tokenizing for {model.model_name}")
+
+        train_X = model.tokenize(train_X)
+        test_X = model.tokenize(test_X)
+        train_dataset = Dataset(train_X, train_y)
+        test_dataset = Dataset(test_X, test_y)
+
+        main_logger.debug(f"About to start fine-tuning {model.model_name}")
+        fine_tune(model, train_dataset, test_dataset, results_dir=f"./results/transformers/{feature}/")
 
     models_validation = [
             ModernBERT(model_name=f"{directory}/{feature}/answerdotai/ModernBERT-base/fine_tuned_answerdotai/ModernBERT-base", 
