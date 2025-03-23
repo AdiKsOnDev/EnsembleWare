@@ -20,6 +20,7 @@ RESULTS_PATH = os.getenv('RESULTS_PATH')
 
 load_dotenv()
 df = pd.read_csv(DATASET_PATH)
+df = df.drop('Unnamed: 0', axis=1)
 
 """
 Textual Features
@@ -45,7 +46,16 @@ y = df['Label'].astype('category').cat.codes
 
 for column in X.columns:
     X[column].fillna(0, inplace=True)
-    X[column] = X[column].apply(lambda x: float(re.sub("[^0-9]", "", str(x))))
+
+def convert_hex(value):
+    if isinstance(value, str) and value.startswith("0x"):
+        try:
+            return int(value, 16)
+        except ValueError:
+            return value
+    return value
+
+X = X.map(convert_hex)
 
 train_X, test_X, train_y, test_y = train_test_split(X, y, test_size=0.25, stratify=y)
 for model in (GaussianNB(), MultinomialNB(), BernoulliNB(), ComplementNB(), RandomForestClassifier()):
